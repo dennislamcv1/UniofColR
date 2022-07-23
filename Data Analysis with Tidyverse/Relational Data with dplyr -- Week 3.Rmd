@@ -1,0 +1,218 @@
+---
+title: "Relational Data with dplyr -- Week 3"
+author: "Ashwathi Subramanian"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Importing necessary packages
+```{r imports}
+library(Lahman)
+library(babynames)
+library(nasaweather)
+library(nycflights13)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Question 1: Identify the primary keys in the following datasets. Be sure to show that you have the primary key by showing there are no duplicate entries.
+### Lahman::Batting
+### babynames::babynames
+### nasaweather::atmos
+
+```{r question1}
+# Batting
+batting <- tibble(Batting)
+# Displaying the first 6 rows of the dataset
+head(batting)
+
+## The primary key for batting dataset will be a combination of playerID, yearID and stint
+batting %>% 
+  count(playerID,yearID,stint) %>%
+  # Checking for duplicate entries
+  filter(n>1)
+
+# Displaying the first 6 rows of the dataset
+head(babynames)
+
+## The primary key for babynames dataset will be a combination of year, name and sex
+babynames %>% 
+  count(year,name,sex) %>% 
+  # Checking for duplicate entries
+  filter(n>1)
+
+# atoms
+atoms <- nasaweather::atmos
+# Displaying the first 6 rows of the dataset
+head(atoms)
+
+# Adding row number as the primary key column
+atomskey <- atoms %>%
+  mutate(rownum = row_number()) %>%
+  select(rownum, everything())
+
+# Displaying the first 6 rows of the dataset
+head(atomskey)
+```
+
+# -------------------------------------------------------------------------------
+
+## Question 2: What is the relationship between the "Batting", "Master", and "Salaries" tables in the "Lahman" package? What are the keys for each dataset and how do they relate to each other?
+
+### Note : 'Master'table is not available in the 'Lahman' package. Hence, I'm using 'People' instead as it contains all the similar details.
+
+```{r question2}
+# 1. The primary key for the 'masters' table is 'playerID'
+master <- tibble(People)
+# Displaying the first 6 rows of the dataset
+head(master)
+
+master %>% 
+count(playerID) %>% 
+  # Checking for duplicate entries
+  filter(n>1)
+
+# T1. The primary key for the 'salaries' table is a combination of 'yearID', 'teamID' and 'stint'. 
+# 2. The foreign key is 'playerID'.
+
+batting %>% 
+  count(playerID,yearID,stint) %>%
+  # Checking for duplicate entries
+  filter(n>1)
+
+# T1. The primary key for the 'salaries' table is a combination of 'yearID', 'teamID' and 'playerID'. 
+# 2. The foreign key is 'playerID'.
+
+salaries <- tibble(Salaries)
+#nDisplaying the first 6 rows of the dataset
+head(salaries)
+
+salaries %>% 
+  count(yearID,teamID,playerID) %>% 
+  # Checking for duplicate entries
+  filter(n>1)
+```
+
+### 1. Overall, the m'master' table is the main table with 'playerID' as the primary key and gets connected with the 'playerID' column present in both 'batting' and 'salaries' datasets.
+### 2. The relationship between the 'master' table and the 'batting' table is one to many.
+### 3. The relationship between the 'master' table and the 'salaries' table is one to many.
+
+# -------------------------------------------------------------------------------
+
+## Question 3: Load the "nycflights13" library. Use an appropriate join to add a column containing the airline name to the "flights" dataset present in the library. Be sure to put the carrier code and name in the first two columns of the result so we can see them. Save the result as "flights2".
+
+```{r question3}
+# Joining 'flights' and 'airlines' using left_join
+flights2 <- flights %>% 
+  left_join(airlines, by = "carrier") %>% 
+  select(carrier,name,everything())
+
+# Renaming the column 'name' to 'carrier_name'
+flights2 <- flights2 %>% 
+  rename(carrier_name = name)
+
+# Displaying the first 6 rows of the dataset
+head(flights2)
+```
+
+# -------------------------------------------------------------------------------
+
+## Question 4: Use an appropriate join to add the airport name to the "flights2" dataset you got above. The codes and names of the airports are in the "airports" dataset of the "nycflights13" package. Put the carrier and carrier name first followed by the destination and destination name, then everything else.
+
+```{r question4}
+# Joining 'flights2' and 'airports' using left_join
+flights2 <- flights2 %>% 
+  left_join(airports, by =  c("dest" = "faa"))
+
+# Renaming the column 'name' to 'dest_name'
+flights2 <- flights2 %>% 
+  rename(dest_name = name)
+
+# Displaying the final dataset after left join
+flights2 %>% 
+  select(carrier,carrier_name,dest,dest_name,everything())
+```
+
+# -------------------------------------------------------------------------------
+
+## Question 5: The "nycflights13" library and the code to create spatial map is provided for you. Now compute the average delay by destination, then join on the airports dataframe so you can show the spatial distribution of delays.
+### * Use the size or colour of the points to display the average delay for each airport.
+### * Add the location of the origin and destination (i.e. the lat and lon) to flights.
+### * Compute the average delay by destination.
+
+```{r question5}
+# Grouping by 'dest' and finding the average delay
+spatial_delay_distribution <- flights %>% 
+  group_by(dest) %>% 
+  summarise(avg_delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  # joining the flights dataset with airports dataset
+  left_join(airports, by = c("dest" = "faa"))
+  
+# Displaying the top 6 rows
+head(spatial_delay_distribution)
+
+# Adding the location of the origin and destination (i.e. the lat and lon) to flights
+spatial_delay_distribution %>% 
+  ggplot(mapping = aes(lon, lat, colour = avg_delay)) +
+  borders("state") +
+  geom_point() +
+  coord_quickmap()
+
+# Add the location of the origin and destination (i.e. the lat and lon) to flights.
+flights_final <- flights %>% 
+  select(year:day,time_hour,origin,dest) %>% 
+  # left join to match 'origin' with 'faa'
+  left_join(airports, by = c("origin" = "faa")) %>% 
+  # left join to match 'dest' with 'faa'
+  left_join(airports, by = c("dest" = "faa")) %>% 
+  select(year:day,time_hour,origin,dest,contains(c("lat","lon")))
+
+# Substituing 'lat.x' and 'lon.x' with lat_origin' and 'lon_origin' 
+names(flights_final) <- gsub(names(flights_final), pattern = ".x", replacement = "_origin")
+# Substituing 'lat.y' and 'lon.xy with lat_dest' and 'lon_dest' 
+names(flights_final) <- gsub(names(flights_final), pattern = ".y", replacement = "_dest")
+
+flights_final <- flights_final %>% 
+  select(year:dest,contains('origin'),contains('dest'))
+
+# Displaying the first 6 rows of the dataset
+head(flights_final)
+```
+
+# -------------------------------------------------------------------------------
+
+## Question 6: Use a set operation function to find which airport codes from flights are not in the airports dataset.
+
+```{r question6}
+# Finding all the distinct airport codes present in the 'flights' dataset
+airport_codes_from_flights <- union(flights$origin,flights$dest)
+# Finding all the distinct airport codes present in the 'airports' dataset
+airport_codes_from_airports <- airports$faa
+
+# Using setdiff to find which airport codes from flights are not in the airports dataset
+setdiff(airport_codes_from_flights,airport_codes_from_airports)
+```
+
+# -------------------------------------------------------------------------------
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+# -------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+
+
+
+ 
+
+
+
+
