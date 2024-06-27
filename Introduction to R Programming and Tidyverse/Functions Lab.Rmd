@@ -18,6 +18,37 @@ Review the roll functions from Section 2 in *Hands-On Programming in R*. Using t
 Your function should contain the arguments `max_rolls`, `sides`, and `num_of_dice`. You may wish to set some of the arguments to default values. 
 
 ```{r}
+# Function to simulate loaded dice rolls and produce histogram
+simulate_loaded_dice_rolls <- function(max_rolls = 50000, sides = 8, num_of_dice = 3) {
+  
+  # Define probabilities for each side of the die
+  probabilities <- rep(1/10, sides)
+  probabilities[7] <- 2/10  # Setting higher probability for number 7
+  
+  # Function to roll a single loaded die
+  roll_loaded_die <- function() {
+    sample(1:sides, size = 1, prob = probabilities)
+  }
+  
+  # Function to roll multiple dice and sum their outcomes
+  roll_loaded_dice <- function(num_dice) {
+    sum(replicate(num_dice, roll_loaded_die()))
+  }
+  
+  # Simulate rolls
+  rolls <- replicate(max_rolls, roll_loaded_dice(num_of_dice))
+  
+  # Plot histogram
+  hist(rolls, breaks = seq(min(rolls), max(rolls) + 1, by = 1), 
+       main = paste("Histogram of", max_rolls, "rolls of", num_of_dice, "dice"),
+       xlab = "Sum of Dice Rolls",
+       ylab = "Frequency")
+}
+
+# Example usage:
+simulate_loaded_dice_rolls()
+
+
 
 ```
 
@@ -29,6 +60,55 @@ Write a function, rescale01(), that recieves a vector as an input and checks tha
 Be sure to thoroughly provide test cases. Additionally, ensure to allow your response chunk to return error messages.
 
 ```{r}
+# Function to rescale numeric vector to [0, 1]
+rescale01 <- function(x) {
+  # Check if all elements of x are numeric
+  if (!all(is.numeric(x))) {
+    stop("inputs must all be numeric")
+  }
+  
+  # Replace -Inf with 0 and Inf with 1
+  x[x == -Inf] <- 0
+  x[x == Inf] <- 1
+  
+  return(x)
+}
+
+# Test cases
+# Case 1: Numeric vector with -Inf and Inf
+input1 <- c(0.5, 1, -Inf, 2, Inf, 3)
+result1 <- rescale01(input1)
+print(result1)
+# Expected output: 0.5  1.0  0.0  2.0  1.0  3.0
+
+# Case 2: Numeric vector without -Inf and Inf
+input2 <- c(0.1, 0.8, 0.3, 0.9)
+result2 <- rescale01(input2)
+print(result2)
+# Expected output: 0.1  0.8  0.3  0.9
+
+# Case 3: Numeric vector with only Inf
+input3 <- c(Inf, Inf, Inf)
+result3 <- rescale01(input3)
+print(result3)
+# Expected output: 1.0  1.0  1.0
+
+# Case 4: Numeric vector with only -Inf
+input4 <- c(-Inf, -Inf, -Inf)
+result4 <- rescale01(input4)
+print(result4)
+# Expected output: 0.0  0.0  0.0
+
+# Case 5: Non-numeric vector
+input5 <- c("a", "b", "c")
+tryCatch({
+  result5 <- rescale01(input5)
+  print(result5)
+}, error = function(e) {
+  print(paste("Error:", e))
+})
+# Expected output: Error: inputs must all be numeric
+
 
 ```
 
@@ -38,6 +118,45 @@ Be sure to thoroughly provide test cases. Additionally, ensure to allow your res
 Write a function that takes two vectors of the same length and returns the number of positions that have an NA in both vectors. If the vectors are not the same length, stop the function and return the message "vectors must be the same length".
 
 ```{r}
+# Function to count NA values in the same positions of two vectors
+count_na_both <- function(vec1, vec2) {
+  # Check if vectors are of the same length
+  if (length(vec1) != length(vec2)) {
+    stop("vectors must be the same length")
+  }
+  
+  # Count positions where both vectors have NA
+  num_na_both <- sum(is.na(vec1) & is.na(vec2))
+  
+  return(num_na_both)
+}
+
+# Test cases
+# Case 1: Vectors with NA at same positions
+vec1 <- c(1, NA, 3, NA, 5)
+vec2 <- c(NA, 2, NA, 4, NA)
+result1 <- count_na_both(vec1, vec2)
+print(result1)
+# Expected output: 2 (positions 2 and 5 have NA in both vectors)
+
+# Case 2: Vectors with no NA at same positions
+vec3 <- c(1, 2, 3, 4, 5)
+vec4 <- c(NA, NA, NA, NA, NA)
+result2 <- count_na_both(vec3, vec4)
+print(result2)
+# Expected output: 0 (no positions have NA in both vectors)
+
+# Case 3: Vectors of different lengths
+vec5 <- c(1, 2, 3)
+vec6 <- c(NA, NA, NA, NA)
+tryCatch({
+  result3 <- count_na_both(vec5, vec6)
+  print(result3)
+}, error = function(e) {
+  print(paste("Error:", e))
+})
+# Expected output: Error: vectors must be the same length
+
 
 ```
 
@@ -47,6 +166,24 @@ Write a function that takes two vectors of the same length and returns the numbe
 Implement a fizzbuzz function. It takes a single number as input. If the number is divisible by three, it returns “fizz”. If it’s divisible by five it returns “buzz”. If it’s divisible by three and five, it returns “fizzbuzz”. Otherwise, it returns the number. 
 
 ```{r}
+fizzbuzz <- function(number) {
+  if (number %% 3 == 0 && number %% 5 == 0) {
+    return("fizzbuzz")
+  } else if (number %% 3 == 0) {
+    return("fizz")
+  } else if (number %% 5 == 0) {
+    return("buzz")
+  } else {
+    return(as.character(number))
+  }
+}
+
+# Test cases
+print(fizzbuzz(3))    # Output: "fizz"
+print(fizzbuzz(5))    # Output: "buzz"
+print(fizzbuzz(15))   # Output: "fizzbuzz"
+print(fizzbuzz(7))    # Output: "7"
+
 
 ```
 
@@ -73,6 +210,22 @@ get_temp_desc <- function(temp) {
 ```
 
 ```{r}
+get_temp_desc <- function(temp) {
+  temperature_labels <- c("freezing", "cold", "cool", "warm", "hot")
+  cutpoints <- c(-Inf, 0, 10, 20, 30, Inf)
+  
+  desc <- cut(temp, breaks = cutpoints, labels = temperature_labels)
+  
+  return(as.character(desc))
+}
+
+# Test cases
+print(get_temp_desc(-5))   # Output: "freezing"
+print(get_temp_desc(8))    # Output: "cold"
+print(get_temp_desc(15))   # Output: "cool"
+print(get_temp_desc(25))   # Output: "warm"
+print(get_temp_desc(35))   # Output: "hot"
+
 
 ```
 
