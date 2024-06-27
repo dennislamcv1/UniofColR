@@ -1,6 +1,8 @@
 ---
 title: "Data Visualization Lab"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ##### Assignment Instructions
@@ -11,13 +13,38 @@ After completing the assignment, knit your document, and download both your .Rmd
 
 For each response, include comments detailing your response and what each argument in the ggplot function does. 
 
+```{r}
+# Load necessary library
+library(ggplot2)
+
+# Load the mpg dataset
+data(mpg)
+```
+
+```{r}
+# Convert necessary variables to factors
+#mpg$trans <- as.factor(mpg$trans)
+#mpg$cyl <- as.factor(mpg$cyl)
+#mpg$drv <- as.factor(mpg$drv)
+```
+
+```{r}
+View(mpg)
+```
+
 
 ##### Question 1.
 
 ```{r question-1}
 ## RUN TO VIEW THE GRAPH YOU WILL NEED TO REPRODUCE 
 
-knitr::include_graphics("images/question-1.png")
+# Plot 1: Scatter plot with a smooth line
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", se = FALSE) + 
+  labs(title = "Plot 1")
+
+#knitr::include_graphics("images/question-1.png")
 ```
 
 ```{r question-1-response}
@@ -28,8 +55,12 @@ knitr::include_graphics("images/question-1.png")
 
 ```{r question-2}
 ## RUN TO VIEW THE GRAPH YOU WILL NEED TO REPRODUCE 
-
-knitr::include_graphics("images/question-2.png")
+# Plot 2: Scatter plot with color based on drv and a smooth line
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", se = FALSE) + 
+  labs(title = "Plot 2")
+#knitr::include_graphics("images/question-2.png")
 ```
 
 ```{r question-2-response}
@@ -41,7 +72,12 @@ knitr::include_graphics("images/question-2.png")
 ```{r question-3}
 ## RUN TO VIEW THE GRAPH YOU WILL NEED TO REPRODUCE 
 
-knitr::include_graphics("images/question-3.png")
+# Plot 3: Scatter plot with color based on drv and smooth lines for each drv
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", se = FALSE) + 
+  labs(title = "Plot 3")
+#knitr::include_graphics("images/question-3.png")
 ```
 
 ```{r question-3-response}
@@ -52,8 +88,12 @@ knitr::include_graphics("images/question-3.png")
 
 ```{r question-4}
 ## RUN TO VIEW THE GRAPH YOU WILL NEED TO REPRODUCE 
+# Plot 4: Scatter plot with color based on class
+ggplot(mpg, aes(x = cty, y = hwy, color = class)) + 
+  geom_point() + 
+  labs(title = "Plot 4")
 
-knitr::include_graphics("images/question-4.png")
+#knitr::include_graphics("images/question-4.png")
 ```
 
 ```{r question-4-response}
@@ -65,7 +105,13 @@ knitr::include_graphics("images/question-4.png")
 ```{r question-5}
 ## RUN TO VIEW THE GRAPH YOU WILL NEED TO REPRODUCE 
 
-knitr::include_graphics("images/question-5.png")
+# Plot 5: Faceted scatter plot by class with a smooth line
+ggplot(mpg, aes(x = hwy, y = cyl, color = class)) + 
+  geom_point() + 
+geom_smooth(method = "lm", se = FALSE) + 
+  facet_wrap(~ class) + 
+  labs(title = "Plot 5")
+#knitr::include_graphics("images/question-5.png")
 ```
 
 ```{r question-5-response}

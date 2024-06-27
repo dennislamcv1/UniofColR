@@ -1,0 +1,365 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Data Analysis Lab},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Data Analysis Lab}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+\hypertarget{assignment-instructions}{%
+\subparagraph{Assignment Instructions}\label{assignment-instructions}}
+
+Complete all questions below. After completing the assignment, knit your
+document, and download both your .Rmd and knitted output. Upload your
+files for peer review.
+
+For each response, include comments detailing your response and what
+each line does.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(nycflights13)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\hypertarget{question-1.}{%
+\subparagraph{Question 1.}\label{question-1.}}
+
+Using the nycflights13 dataset, find all flights that departed in July,
+August, or September using the helper function between().
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{flights\_jul\_aug\_sep }\OtherTok{\textless{}{-}}\NormalTok{ flights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{between}\NormalTok{(month, }\DecValTok{7}\NormalTok{, }\DecValTok{9}\NormalTok{))}
+
+\NormalTok{flights\_jul\_aug\_sep}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 86,326 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##    <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
+##  1  2013     7     1        1           2029       212      236           2359
+##  2  2013     7     1        2           2359         3      344            344
+##  3  2013     7     1       29           2245       104      151              1
+##  4  2013     7     1       43           2130       193      322             14
+##  5  2013     7     1       44           2150       174      300            100
+##  6  2013     7     1       46           2051       235      304           2358
+##  7  2013     7     1       48           2001       287      308           2305
+##  8  2013     7     1       58           2155       183      335             43
+##  9  2013     7     1      100           2146       194      327             30
+## 10  2013     7     1      100           2245       135      337            135
+## # i 86,316 more rows
+## # i 11 more variables: arr_delay <dbl>, carrier <chr>, flight <int>,
+## #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
+## #   hour <dbl>, minute <dbl>, time_hour <dttm>
+\end{verbatim}
+
+\hypertarget{question-2.}{%
+\paragraph{Question 2.}\label{question-2.}}
+
+Using the nycflights13 dataset sort flights to find the 10 flights that
+flew the furthest. Put them in order of fastest to slowest.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{longest\_flights }\OtherTok{\textless{}{-}}\NormalTok{ flights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(distance)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{head}\NormalTok{(}\DecValTok{10}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{speed =}\NormalTok{ distance }\SpecialCharTok{/}\NormalTok{ (air\_time }\SpecialCharTok{/} \DecValTok{60}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# calculate speed in miles per hour}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(speed))}
+
+\NormalTok{longest\_flights}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 20
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##    <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
+##  1  2013     1     6     1019            900        79     1558           1530
+##  2  2013     1     7     1042            900       102     1620           1530
+##  3  2013     1     3      914            900        14     1504           1530
+##  4  2013     1    10      859            900        -1     1449           1530
+##  5  2013     1     5      858            900        -2     1519           1530
+##  6  2013     1     2      909            900         9     1525           1530
+##  7  2013     1     4      900            900         0     1516           1530
+##  8  2013     1     9      641            900      1301     1242           1530
+##  9  2013     1     8      901            900         1     1504           1530
+## 10  2013     1     1      857            900        -3     1516           1530
+## # i 12 more variables: arr_delay <dbl>, carrier <chr>, flight <int>,
+## #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
+## #   hour <dbl>, minute <dbl>, time_hour <dttm>, speed <dbl>
+\end{verbatim}
+
+\hypertarget{question-3.}{%
+\paragraph{Question 3.}\label{question-3.}}
+
+Using the nycflights13 dataset, calculate a new variable called
+``hr\_delay'' and arrange the flights dataset in order of the arrival
+delays in hours (longest delays at the top). Put the new variable you
+created just before the departure time.Hint: use the experimental
+argument .before.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{flights\_with\_hr\_delay }\OtherTok{\textless{}{-}}\NormalTok{ flights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{hr\_delay =}\NormalTok{ arr\_delay }\SpecialCharTok{/} \DecValTok{60}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(hr\_delay)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(year}\SpecialCharTok{:}\NormalTok{day, hr\_delay, dep\_time, }\FunctionTok{everything}\NormalTok{())}
+
+\NormalTok{flights\_with\_hr\_delay}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 336,776 x 20
+##     year month   day hr_delay dep_time sched_dep_time dep_delay arr_time
+##    <int> <int> <int>    <dbl>    <int>          <int>     <dbl>    <int>
+##  1  2013     1     9     21.2      641            900      1301     1242
+##  2  2013     6    15     18.8     1432           1935      1137     1607
+##  3  2013     1    10     18.5     1121           1635      1126     1239
+##  4  2013     9    20     16.8     1139           1845      1014     1457
+##  5  2013     7    22     16.5      845           1600      1005     1044
+##  6  2013     4    10     15.5     1100           1900       960     1342
+##  7  2013     3    17     15.2     2321            810       911      135
+##  8  2013     7    22     14.9     2257            759       898      121
+##  9  2013    12     5     14.6      756           1700       896     1058
+## 10  2013     5     3     14.6     1133           2055       878     1250
+## # i 336,766 more rows
+## # i 12 more variables: sched_arr_time <int>, arr_delay <dbl>, carrier <chr>,
+## #   flight <int>, tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>,
+## #   distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
+\end{verbatim}
+
+\hypertarget{question-4.}{%
+\subparagraph{Question 4.}\label{question-4.}}
+
+Using the nycflights13 dataset, find the most popular destinations
+(those with more than 2000 flights) and show the destination, the date
+info, the carrier. Then show just the number of flights for each popular
+destination.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{popular\_destinations }\OtherTok{\textless{}{-}}\NormalTok{ flights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(dest) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}} \DecValTok{2000}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(dest, year, month, day, carrier)}
+
+\NormalTok{number\_of\_flights }\OtherTok{\textless{}{-}}\NormalTok{ popular\_destinations }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(dest) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{num\_flights =} \FunctionTok{n}\NormalTok{())}
+
+\FunctionTok{list}\NormalTok{(popular\_destinations, number\_of\_flights)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+## # A tibble: 302,969 x 5
+## # Groups:   dest [46]
+##    dest   year month   day carrier
+##    <chr> <int> <int> <int> <chr>  
+##  1 IAH    2013     1     1 UA     
+##  2 IAH    2013     1     1 UA     
+##  3 MIA    2013     1     1 AA     
+##  4 ATL    2013     1     1 DL     
+##  5 ORD    2013     1     1 UA     
+##  6 FLL    2013     1     1 B6     
+##  7 IAD    2013     1     1 EV     
+##  8 MCO    2013     1     1 B6     
+##  9 ORD    2013     1     1 AA     
+## 10 PBI    2013     1     1 B6     
+## # i 302,959 more rows
+## 
+## [[2]]
+## # A tibble: 46 x 2
+##    dest  num_flights
+##    <chr>       <int>
+##  1 ATL         17215
+##  2 AUS          2439
+##  3 BNA          6333
+##  4 BOS         15508
+##  5 BTV          2589
+##  6 BUF          4681
+##  7 CHS          2884
+##  8 CLE          4573
+##  9 CLT         14064
+## 10 CMH          3524
+## # i 36 more rows
+\end{verbatim}
+
+\hypertarget{question-5.}{%
+\paragraph{Question 5.}\label{question-5.}}
+
+Using the nycflights13 dataset, find the flight information (flight
+number, origin, destination, carrier, number of flights in the year, and
+percent late) for the flight numbers with the highest percentage of
+arrival delays. Only include the flight numbers that have over 100
+flights in the year.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{flight\_info }\OtherTok{\textless{}{-}}\NormalTok{ flights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(flight) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{n}\NormalTok{() }\SpecialCharTok{\textgreater{}} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{origin =} \FunctionTok{first}\NormalTok{(origin),}
+    \AttributeTok{dest =} \FunctionTok{first}\NormalTok{(dest),}
+    \AttributeTok{carrier =} \FunctionTok{first}\NormalTok{(carrier),}
+    \AttributeTok{num\_flights =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{percent\_late =} \FunctionTok{mean}\NormalTok{(arr\_delay }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) }\SpecialCharTok{*} \DecValTok{100}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(percent\_late))}
+
+\NormalTok{flight\_info}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1,157 x 6
+##    flight origin dest  carrier num_flights percent_late
+##     <int> <chr>  <chr> <chr>         <int>        <dbl>
+##  1     43 JFK    MCO   B6              133         63.2
+##  2    803 JFK    SJU   B6              142         61.3
+##  3   1165 EWR    LAX   UA              147         61.2
+##  4   1127 EWR    SFO   UA              107         58.9
+##  5    195 EWR    MDW   WN              142         58.5
+##  6    705 JFK    SJU   B6              225         53.8
+##  7   1202 EWR    MIA   UA              106         53.8
+##  8    137 JFK    RSW   B6              153         53.6
+##  9    141 JFK    PBI   B6              377         52.8
+## 10   1130 LGA    IAH   UA              103         49.5
+## # i 1,147 more rows
+\end{verbatim}
+
+\end{document}

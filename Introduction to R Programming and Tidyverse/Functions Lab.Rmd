@@ -1,6 +1,8 @@
 ---
 title: "Functions Lab"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ##### Assignment Instructions

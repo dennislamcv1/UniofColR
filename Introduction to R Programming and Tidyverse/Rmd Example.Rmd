@@ -1,0 +1,53 @@
+---
+title: "Example R Markdown File"
+author: "Your Name"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+  pdf_document:
+    toc: true
+    toc_depth: '2'
+---
+
+# Introduction
+
+This is an example R Markdown file demonstrating various formatting and output options.
+
+## Bulleted List with Sub-bullets
+
+- Item 1
+  - Sub-item A
+  - Sub-item B
+- Item 2
+- Item 3
+
+## Numbered List
+
+1. First item
+2. Second item
+3. Third item
+
+## Emphasis
+
+Some *italicized* words and some **bold** words.
+
+## Headers
+
+### Level 2 Header
+
+### Another Level 2 Header
+
+## Results of R Code
+
+```{r results, echo=FALSE}
+summary(cars)
+```
+
+```{r}
+sessionInfo()
+```
+
+
+
