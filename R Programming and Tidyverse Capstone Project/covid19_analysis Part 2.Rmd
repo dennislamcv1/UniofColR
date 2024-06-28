@@ -392,9 +392,6 @@ The visualization displays the seven-day average of new COVID-19 cases and death
 
 By looking at the trends in this visualization, health officials can better understand the spread and impact of COVID-19. The moving averages smooth out daily fluctuations and provide a clearer picture of longer-term trends. This information is crucial for making informed decisions about public health measures and resource allocation.
 
-```{r}
---------------------
-```
 
 
 ##### Part 2 - US State Comparison
@@ -962,95 +959,4 @@ The visualization shows the seven-day average of new COVID-19 cases and deaths p
 
 By comparing these trends, we can see how the pandemic affected each state over time. This information is crucial for understanding regional differences in the spread and impact of COVID-19 and can inform public health strategies and resource allocation.
 
-```{r}
---------------------------hcxhcbhxzbchbxzhjcbhxzj
-```
 
-
-#### Part 3 - Global Comparison
-
-```{r import-csse}
-# Import global COVID-19 statistics aggregated by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.
-# Import global population estimates from the World Bank.
-
-csse_global_deaths <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
-csse_global_cases <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
-csse_us_deaths <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv")
-csse_us_cases <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
-
-globabl_population_estimates <- read_csv("global_population_estimates.csv")
-```
-
-##### Question 1
-
-Using the state you selected in Part 2 Question 2 compare the daily number of cases and deaths reported from the CSSE and NY Times. 
-
-```{r p3q1-response}
-
-# To compare your state data between the two data sets, you will first need to tidy the US CSSE death and cases data.
-# Hint: Review the documentation for pivot_longer().
-
-
-# Once you have tidied your data, join the two CSSE US data sets to include cases and deaths in one table. 
-
-
-# Finally, create two visualizations with one plotting the CSSE and NY Times cases and the other plotting the CSEE and NY Times deaths.
-
-```
-
-```{r p3q1-sample}
-
-# Your tidied CSSE data for your selected state should look similar to the following tibble:
-#
-# A tibble: 43,362 × 6
-#     fips  county  state        date      cases  deaths
-#     <dbl> <chr>   <chr>       <date>     <dbl>  <dbl>
-#  1  8001  Adams  Colorado   2020-03-15     6      0
-#  2  8001  Adams  Colorado   2020-03-16     8      0
-#  3  8001  Adams  Colorado   2020-03-17    10      0
-#  4  8001  Adams  Colorado   2020-03-18    10      0
-#  5  8001  Adams  Colorado   2020-03-19    10      0
-#  6  8001  Adams  Colorado   2020-03-20    12      0
-#  7  8001  Adams  Colorado   2020-03-21    14      0
-#  8  8001  Adams  Colorado   2020-03-22    18      0
-#  9  8001  Adams  Colorado   2020-03-23    25      0
-# 10  8001  Adams  Colorado   2020-03-24    27      0
-# … with 43,352 more rows
-
-```
-
--- Communicate your methodology, results, and interpretation here -- 
-
-##### Question 2 
-
-Now that you have verified the data reported from the CSSE and NY Times are similar, combine the global and US CSSE data sets and identify the top 10 countries in terms of deaths and cases per 100,000 people between March 15, 2020, and December 31, 2021.
-
-```{r p3q2-response}
-
-# First, combine and tidy the CSSE death and cases data sets. You may wish to keep the two sets separate.
-# Then, tidy the global population estimates. While tidying your data, remember to include columns that you will be able to use when joining the COVID-19 data. 
-# You will notice that the population estimates data does not include every country reported in the CSSE data. When calculating statistics per 100,000 people, you will need to filter the CSSE data to only include countries that you have population estimates for. 
-
-```
-
--- Communicate your methodology, results, and interpretation here -- 
-
-##### Question 3
-
-Construct a visualization plotting the 10 countries in terms of deaths and cases per 100,000 people between March 15, 2020, and December 31, 2021. In designing your visualization keep the number of data you will be plotting in mind. You may wish to create two separate visualizations, one for deaths and another for cases. 
-
-```{r p3q3-response}
-
-```
-
--- Communicate your methodology, results, and interpretation here -- 
-
-##### Question 4
-
-Finally, select four countries from one continent and create visualizations for the daily number of confirmed cases per 100,000 and the daily number of deaths per 100,000 people between March 15, 2020, and December 31, 2021. 
-
-```{r p3q4-response}
-
-```
-
--- Communicate your methodology, results, and interpretation here -- 
