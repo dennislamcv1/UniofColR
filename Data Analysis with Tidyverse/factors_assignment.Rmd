@@ -11,12 +11,91 @@ date: ''
 
 Load the stringr and forcats library
 
+```{r}
+# Load libraries
+library(stringr)
+library(forcats)
+
+# Load dataset
+data(gss_cat)
+
+
+```
+
+
 1.From the "forcats" library load gss_cat data. Explore the distribution of rincome (reported income). What makes the default bar chart hard to understand? How could you improve the plot?
+
+```{r}
+# Explore rincome variable
+table(gss_cat$rincome)
+
+# Reorder rincome levels
+gss_cat$rincome <- fct_relevel(gss_cat$rincome, 
+                               "lt50", "50to100", "100to150", "150to200", "200up")
+
+# Plot the distribution of rincome
+barplot(table(gss_cat$rincome), 
+        main = "Distribution of Reported Income",
+        xlab = "Income Categories",
+        ylab = "Count")
+
+```
+
 
 2. What is the most common religion? What is the most common partyid?
 
+```{r}
+# Most common religion
+table(gss_cat$relig)
+
+# Most common partyid
+table(gss_cat$partyid)
+
+```
+
+
 3.Which relig does denom (denomination) apply to? How can you find out with a table? How can you find out with a visualisation?
+
+```{r}
+# Table to show which denominations apply to which religions
+table(gss_cat$relig, gss_cat$denom)
+
+# Visualization (e.g., mosaic plot) to show the relationship
+mosaicplot(table(gss_cat$relig, gss_cat$denom), 
+           main = "Religion vs Denomination")
+
+```
+
+
 
 4.How have the proportions of people identifying as Democrat, Republican, and Independent changed over time? Plot a suitable chart.
 
+```{r}
+# Create a table of proportions by year
+partyid_prop <- prop.table(table(gss_cat$year, gss_cat$partyid), margin = 1)
+
+# Plot a line chart
+matplot(row.names(partyid_prop), partyid_prop, 
+        type = "l", lty = 1, col = 1:3,
+        xlab = "Year", ylab = "Proportion",
+        main = "Party Identification Over Time",
+        legend = c("Democrat", "Independent", "Republican"))
+
+```
+
+
 5.Collapse "rincome" into smaller set of categories?
+
+```{r}
+# Recode rincome into broader categories
+gss_cat$rincome_collapsed <- fct_collapse(gss_cat$rincome,
+                                          "< $50k" = c("lt50"),
+                                          "$50k - $100k" = c("50to100"),
+                                          "$100k - $150k" = c("100to150"),
+                                          "> $150k" = c("150to200", "200up"))
+
+# Check the new variable
+table(gss_cat$rincome_collapsed)
+
+```
+

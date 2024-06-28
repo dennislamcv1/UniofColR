@@ -18,13 +18,28 @@ library(tidyverse)
 
 The built in billboard dataset is not tidy. Describe why it is not tidy and then tidy the dataset.
 
+The billboard dataset is not tidy because:
+
+- Each song is represented in multiple rows with weekly rankings as separate columns.
+- Multiple observations are stored in the same table, making it difficult to manipulate and analyze.
+
 ```{r question-1-response}
 
 # First gather up all the week entries into a row for each week for each song (where there is an entry)
-
+# Load billboard dataset
+data("billboard")
 
 # Then, convert the week variable to a number and figure out the date corresponding to each week on the chart
-
+# Tidy the dataset
+billboard_tidy <- billboard %>%
+  pivot_longer(
+    cols = starts_with("wk"),
+    names_to = "week",
+    names_prefix = "wk",
+    values_to = "rank",
+    values_drop_na = TRUE
+  ) %>%
+  mutate(week = as.integer(week))
 
 # Sort the data by artist, track and week. Here are what your first entries should be (formatting can be different):
 #>  A tibble: 5,307 x 5
@@ -42,6 +57,9 @@ The built in billboard dataset is not tidy. Describe why it is not tidy and then
  # 10 2Ge+her The Hardest Part Of ... 2000-09-02       3    92 2000-09-16
  # … with 5,297 more rows
 
+# Display the tidy dataset
+head(billboard_tidy)
+
 ```
 
 ##### Question 2. 
@@ -51,6 +69,20 @@ Tidy the "fish_encounters" dataset of fish spotting by monitoring stations. Make
 
 ```{r question-2-response}
 
+# Load fish_encounters dataset
+data("fish_encounters")
+
+# str(fish_encounters)
+
+# Tidy the dataset with NA filled with 0
+fish_encounters_tidy <- fish_encounters %>%
+  complete(fish, station) %>%  # Ensure all combinations of fish and station are present
+  replace_na(list(seen = 0))  # Replace NA values with 0
+
+
+# Display the tidy dataset
+head(fish_encounters_tidy)
+
 ```
 
 ##### Question 3. 
@@ -59,6 +91,24 @@ Import the flowers1 dataset. Tidy and pivot the data. Hint: use "read_csv2()" to
 
 ```{r question-3-response}
 
+# Import flowers1 dataset
+flowers1 <- read_csv2("flowers1.csv")
+
+str(flowers1)
+
+spec(flowers1)
+
+# Pivot longer
+flowers1_long <- flowers1_tidy %>%
+  pivot_longer(
+    cols = -c(Time, replication),
+    names_to = "Variable",
+    values_to = "Value"
+  )
+
+# Display the tidy dataset
+head(flowers1_tidy)
+
 ```
 
 ##### Question 4.
@@ -66,6 +116,27 @@ Import the flowers1 dataset. Tidy and pivot the data. Hint: use "read_csv2()" to
 Import the flowers2 dataset. Tidy the dataset by turning the one column into 3 separate columns
 
 ```{r question-4-response}
+
+# Import flowers2 dataset
+flowers2 <- read_csv2("flowers2.csv")
+
+# str(flowers2)
+
+# Separate the Flowers/Intensity column into two columns: Flowers and Intensity
+flowers2_tidy <- flowers2 %>%
+  separate(
+    col = `Flowers/Intensity`,
+    into = c("Flowers", "Intensity"),
+    sep = "/"
+  ) %>%
+  mutate(
+    Flowers = as.numeric(Flowers),
+    Intensity = as.numeric(Intensity)
+  )
+
+# Display the tidy dataset
+head(flowers2_tidy)
+
 
 ```
 
@@ -80,6 +151,15 @@ output <- tibble(
       return = c(1.5, 0.75,  0.5,  1.8,  NA)
     )
 output
+
+# Make implicit missing values explicit
+output_explicit <- output %>%
+  complete(treatment, gender)
+
+# Display the dataset with explicit missing values
+output_explicit
+
+
 ```
 
 
@@ -88,6 +168,26 @@ output
 Import the weather dataset as weather. Use "pivot_longer()" to put the days all in one column, then use "pivot_wider" to separate tmax and tmin into separate columns. Print the summary of the final resulting dataset 
 
 ```{r question-6-response}
+# Import weather dataset
+weather <- read_csv("weather.csv")
+
+# str(weather)
+
+# Tidy the dataset
+weather_tidy <- weather %>%
+  pivot_longer(
+    cols = starts_with("d"),
+    names_to = "day",
+    names_prefix = "d",
+    values_to = "value"
+  ) %>%
+  pivot_wider(
+    names_from = element,
+    values_from = value
+  )
+
+# Print summary of the final dataset
+summary(weather_tidy)
 
 ```
 
@@ -96,5 +196,18 @@ Import the weather dataset as weather. Use "pivot_longer()" to put the days all 
 Load the built in "anscombe" data frame and use "pivot_longer()" to separate all the x and y columns and categorize them into 4 sets
 
 ```{r question-7-response}
+# Load anscombe dataset
+data("anscombe")
 
+# Tidy the dataset
+anscombe_tidy <- anscombe %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = c(".value", "set"),
+    names_pattern = "(.)(.)"
+  ) %>%
+  mutate(set = as.integer(set))
+
+# Display the tidy dataset
+head(anscombe_tidy)
 ```

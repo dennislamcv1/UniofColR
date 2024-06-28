@@ -23,14 +23,73 @@ babynames::babynames
 nasaweather::atmos
 
 ```{r question-1-response}
+# Load necessary libraries
+library(dplyr)
+library(Lahman)
+library(babynames)
+library(nasaweather)
 
 ```
+
+```{r}
+# Lahman::Batting
+batting <- Lahman::Batting
+batting_pk <- batting %>% 
+  group_by(playerID, yearID, stint) %>%
+  summarise(count = n()) %>%
+  filter(count > 1)
+
+# babynames::babynames
+babynames <- babynames::babynames
+babynames_pk <- babynames %>% 
+  group_by(year, sex, name) %>%
+  summarise(count = n()) %>%
+  filter(count > 1)
+
+# nasaweather::atmos
+
+atmos <- nasaweather::atmos
+atmos_pk <- atmos %>% 
+  group_by(year, month) %>%
+  summarise(count = n()) %>%
+  filter(count > 1)
+
+
+```
+
 
 ##### Question 2.
 
 What is the relationship between the "Batting", "Master", and "Salaries" tables in the "Lahman" package? What are the keys for each dataset and how do they relate to each other?
 
 ```{r question-2-response}
+# Lahman::Master
+master <- Lahman::People
+
+# Lahman::Salaries
+salaries <- Lahman::Salaries
+
+# Check foreign key relationships
+batting_people_fk <- batting %>%
+  filter(!playerID %in% master$playerID) %>%
+  nrow()
+
+batting_salaries_fk <- batting %>%
+  filter(!interaction(playerID, yearID) %in% interaction(salaries$playerID, salaries$yearID)) %>%
+  nrow()
+
+salaries_people_fk <- salaries %>%
+  filter(!playerID %in% master$playerID) %>%
+  nrow()
+
+list(
+  batting_pk = nrow(batting_pk),
+  babynames_pk = nrow(babynames_pk),
+  atmos_pk = nrow(atmos_pk),
+  batting_people_fk = batting_people_fk,
+  batting_salaries_fk = batting_salaries_fk,
+  salaries_people_fk = salaries_people_fk
+)
 
 ```
 
@@ -40,6 +99,15 @@ Load the "nycflights13" library. Use an appropriate join to add a column contain
 
 ```{r question-3-response}
 
+# Load necessary libraries
+library(dplyr)
+library(nycflights13)
+
+# Question 3: Adding Airline Names
+flights2 <- flights %>%
+  left_join(airlines, by = c("carrier" = "carrier")) %>%
+  select(carrier, name, everything())
+
 ```
 
 ##### Question 4.
@@ -48,6 +116,16 @@ Use an appropriate join to add the airport name to the "flights2" dataset you go
 
 ```{r question-4-response}
 
+airports <- nycflights13::airports
+
+# Join flights2 with airports to add the destination airport name
+flights3 <- flights2 %>%
+  left_join(airports, by = c("dest" = "faa")) %>%
+  rename(name = name.y) %>%
+  select(carrier, name, dest, everything())
+
+# Display the first few rows of flights3
+head(flights3)
 ```
 
 ##### Question 5.
@@ -60,14 +138,33 @@ The "nycflights13" library and the code to create spatial map is provided for yo
 
 Use the textbook for reference.
 ```{r question-5-response}
+# Load necessary libraries
+library(dplyr)
 library(nycflights13)
+library(ggplot2)
+library(maps)
 
-airports %>%
-  semi_join(flights, c("faa" = "dest")) %>%
-  ggplot(aes(lon, lat)) +
-    borders("state") +
-    geom_point() +
-    coord_quickmap()
+# Step 1: Compute the average delay by destination
+avg_delay_by_dest <- flights %>%
+  group_by(dest) %>%
+  summarise(avg_arr_delay = mean(arr_delay, na.rm = TRUE)) %>%
+  ungroup()
+
+# Step 2: Join the average delay data with the airports dataset
+avg_delay_airports <- avg_delay_by_dest %>%
+  left_join(airports, by = c("dest" = "faa"))
+
+# Step 3: Create a spatial map to visualize the average delays
+ggplot(data = avg_delay_airports, aes(x = lon, y = lat)) +
+  borders("state") +
+  geom_point(aes(size = avg_arr_delay, color = avg_arr_delay), alpha = 0.7) +
+  scale_color_gradient(low = "green", high = "red", na.value = "grey50") +
+  labs(title = "Average Arrival Delay by Destination Airport",
+       x = "Longitude", y = "Latitude", 
+       size = "Avg Arrival Delay",
+       color = "Avg Arrival Delay") +
+  coord_quickmap()
+
 ```
 
 ##### Question 6.
@@ -75,6 +172,21 @@ airports %>%
 Use a set operation function to find which airport codes from flights are not in the airports dataset.
 
 ```{r question-6-response}
+# Extract unique airport codes from the flights dataset
+flights_airports <- flights %>%
+  select(dest) %>%
+  distinct()
+
+# Extract unique airport codes from the airports dataset
+airports_codes <- airports %>%
+  select(faa) %>%
+  distinct()
+
+# Find airport codes in flights that are not in airports
+missing_airports <- setdiff(flights_airports$dest, airports_codes$faa)
+
+# Display the missing airport codes
+missing_airports
 
 ```
 

@@ -1,0 +1,172 @@
+---
+title: "String Manipulation and Regular Expressions Assignment"
+author: ''
+---
+##### Assignment Instructions
+
+Complete all questions below. After completing the assignment, knit your document, and download both your .Rmd and knitted output. Upload your files for peer review. 
+
+For each response, include comments detailing your response and what each line does. Ensure you test your functions with sufficient test cases to identify and correct any potential bugs.
+
+##### Required Libraries
+
+Load the stringr library
+
+```{r libraries}
+library(stringr)
+
+
+```
+
+##### Question 1.
+
+Use str_c to put `(` before the area codes followed by `)` and a space followed by the phone number. 
+
+```{r question-1-response}
+
+### Answer should be of the form "(703) 5551212" "(863) 1234567" "(404) 7891234" "(202) 4799747"
+
+# Vectors of area codes and phone numbers
+area_codes <- c(703, 863, 404, 202)
+phone_nums <- c(5551212, 1234567, 7891234, 4799747)
+
+# Use str_c to format the phone numbers
+formatted_numbers <- str_c("(", area_codes, ") ", phone_nums)
+
+# Print the formatted numbers
+formatted_numbers
+
+```
+
+##### Question 2.
+
+Create a function that receives a single word as an input. Use str_length() and str_sub() to extract the middle character from the string. What will you do if the string has an even number of characters? Test your function on the strings “hamburger” and “hotdog”
+
+```{r quetsion-2-response}
+extract_middle <- function(word) {
+  len <- str_length(word)
+  if (len %% 2 == 1) {
+    middle <- str_sub(word, (len + 1) / 2, (len + 1) / 2)
+  } else {
+    middle <- str_sub(word, len / 2, len / 2 + 1)
+  }
+  return(middle)
+}
+
+# Test the function on "hamburger" and "hotdog"
+extract_middle("hamburger")
+extract_middle("hotdog")
+
+
+```
+
+##### Question 3. 
+
+How would you match the sequence "’\? Note this is a double quote, single quote, backslash and question mark. Build it up one piece at a time. Use it to identify that sequence contained in s2 below.
+
+```{r question-3-response}
+
+s <- "\"'\\?"
+s2 <- str_c("some stuff",s,"more!")
+
+s <- "\"'?\\?"  # Assuming this is the sequence you're looking for
+s2 <- str_c("some stuff", s, "more!")
+
+# Regular expression to match the sequence
+pattern <- "\"\'\\\\\\?"
+
+# Check if the sequence is in s2
+str_detect(s2, pattern)
+
+```
+
+##### Question 4. 
+
+Using the words provided in stringr::words, create regular expressions that find all words that:
+
+```{r question-4-response}
+
+# Load the words dataset
+data(words, package = "stringr")
+
+# End with "ing" or "ise"
+pattern_1 <- ".*(ing|ise)$"
+matching_words_1 <- words[str_detect(words, pattern_1)]
+
+
+# Do not follow the rule "i before e except after c"
+pattern_2 <- ".*[^c]ei.*|.*cei.*"
+matching_words_2 <- words[str_detect(words, pattern_2)]
+
+
+# Begin with at least two vowels and end with at least two consonants
+pattern_3 <- "^[aeiou]{2,}.*[^aeiou]{2}$"
+matching_words_3 <- words[str_detect(words, pattern_3)]
+
+
+# Contain a repeated pair of letters (e.g. "church" contains "ch" twice)
+pattern_4 <- "(..).*\\1"
+matching_words_4 <- words[str_detect(words, pattern_4)]
+
+
+# Contain one letter other than e that is repeated in at least three places (e.g. “appropriate” contains three “p”s.)
+pattern_5 <- "([a-df-z]).*\\1.*\\1"
+matching_words_5 <- words[str_detect(words, pattern_5)]
+
+# Display the results
+list(
+  words_ending_with_ing_or_ise = matching_words_1,
+  words_not_following_ie_rule = matching_words_2,
+  words_beginning_with_two_vowels_ending_with_two_consonants = matching_words_3,
+  words_with_repeated_pair_of_letters = matching_words_4,
+  words_with_one_letter_repeated_at_least_three_times = matching_words_5
+)
+
+
+```
+
+##### Question 5. 
+
+Using the sentences provided in stringr::sentences, find all words that come after a “number” like “one”, “two”, … “twelve”. Pull out both the number and the word.
+
+```{r question-5-response}
+
+# Load the sentences dataset
+data(sentences, package = "stringr")
+
+pattern_numbers <- "(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)"
+pattern_words <- paste0("\\b", pattern_numbers, "\\s+(\\w+)")
+
+# Find sentences matching the pattern
+matching_sentences <- sentences[str_detect(sentences, pattern_words)]
+
+# Extract numbers and following words
+extracted_matches <- str_match_all(matching_sentences, pattern_words)
+matches <- lapply(extracted_matches, function(match) match[, c(2, 3)])
+
+# Display results for Question 5
+print("Question 5: Words following numbers like 'one', 'two', ..., 'twelve'")
+matches
+
+
+```
+
+##### Question 6. 
+
+Using the sentences provided in stringr::sentences, view all sentences that contain the word “good” or the word “bad”. Get the sentence numbers where those words occur. Use str_replace_all() to replace the word “bad” with the word “horrible” and the word “good” with the word “great”. Look at the sentence numbers you found before to verify the words were replaced correctly.
+
+```{r question-6-response}
+
+# Find sentences containing "good" or "bad"
+sentence_indices <- grep("\\b(good|bad)\\b", sentences, ignore.case = TRUE, value = FALSE)
+
+# Replace "bad" with "horrible" and "good" with "great"
+modified_sentences <- sentences
+modified_sentences <- str_replace_all(modified_sentences, "\\bbad\\b", "horrible")
+modified_sentences <- str_replace_all(modified_sentences, "\\bgood\\b", "great")
+
+# Verify replacements in the identified sentence numbers
+sentence_numbers <- which(grepl("\\b(great|horrible)\\b", modified_sentences, ignore.case = TRUE))
+sentence_numbers
+
+```
