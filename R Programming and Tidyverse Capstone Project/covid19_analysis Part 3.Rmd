@@ -12,11 +12,12 @@ knitr::opts_chunk$set(warning = FALSE)
 ```
 #### Required Packages
 
-```{r setup, include=FALSE}
+```{r}
 library(tidyverse)
 library(lubridate)
 library(usmap)
 library(zoo)
+library(readr)
 ```
 
 #### Part 1 - Basic Exploration of US Data
@@ -395,10 +396,6 @@ ggplot(daily_totals, aes(x = date)) +
 The visualization displays the seven-day average of new COVID-19 cases and deaths per 100,000 people in the US over time. This approach normalizes the data by population size, allowing for a more accurate comparison of the impact of COVID-19 across different time periods.
 
 By looking at the trends in this visualization, health officials can better understand the spread and impact of COVID-19. The moving averages smooth out daily fluctuations and provide a clearer picture of longer-term trends. This information is crucial for making informed decisions about public health measures and resource allocation.
-
-```{r}
---------------------
-```
 
 
 ##### Part 2 - US State Comparison
