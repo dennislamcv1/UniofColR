@@ -6,6 +6,10 @@ output:
     df_print: paged
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+
+```
 #### Required Packages
 
 ```{r setup, include=FALSE}
@@ -962,10 +966,6 @@ The visualization shows the seven-day average of new COVID-19 cases and deaths p
 
 By comparing these trends, we can see how the pandemic affected each state over time. This information is crucial for understanding regional differences in the spread and impact of COVID-19 and can inform public health strategies and resource allocation.
 
-```{r}
---------------------------hcxhcbhxzbchbxzhjcbhxzj
-```
-
 
 #### Part 3 - Global Comparison
 
@@ -973,12 +973,12 @@ By comparing these trends, we can see how the pandemic affected each state over 
 # Import global COVID-19 statistics aggregated by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.
 # Import global population estimates from the World Bank.
 
-csse_global_deaths <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv")
-csse_global_cases <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
-csse_us_deaths <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv")
-csse_us_cases <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
+csse_global_deaths <- read_csv("time_series_covid19_deaths_global.csv")
+csse_global_cases <- read_csv("time_series_covid19_confirmed_global.csv")
+csse_us_deaths <- read_csv("time_series_covid19_deaths_US.csv")
+csse_us_cases <- read_csv("time_series_covid19_confirmed_US.csv")
 
-globabl_population_estimates <- read_csv("global_population_estimates.csv")
+global_population_estimates <- read_csv("global_population_estimates.csv")
 ```
 
 ##### Question 1
@@ -990,11 +990,77 @@ Using the state you selected in Part 2 Question 2 compare the daily number of ca
 # To compare your state data between the two data sets, you will first need to tidy the US CSSE death and cases data.
 # Hint: Review the documentation for pivot_longer().
 
+# Filter CSSE data for Alaska and pivot longer to tidy format
+csse_cases_alaska <- csse_us_cases %>%
+  filter(Province_State == "Alaska") %>%
+  select(-c(UID, iso2, iso3, code3, FIPS, Admin2, Country_Region, Lat, Long_, Combined_Key)) %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_cases") %>%
+  mutate(date = mdy(date))
+
+csse_deaths_alaska <- csse_us_deaths %>%
+  filter(Province_State == "Alaska") %>%
+  select(-c(UID, iso2, iso3, code3, FIPS, Admin2, Country_Region, Lat, Long_, Combined_Key)) %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_deaths") %>%
+  mutate(date = mdy(date))
+
+# Join the CSSE cases and deaths data
+csse_alaska <- csse_cases_alaska %>%
+  left_join(csse_deaths_alaska, by = c("Province_State", "date"))
+
+
 
 # Once you have tidied your data, join the two CSSE US data sets to include cases and deaths in one table. 
 
+# Read in the NY Times data
+#us_counties_2020 <- read_csv("us-counties-2020.csv")
+#us_counties_2021 <- read_csv("us-counties-2021.csv")
+#us_counties_2022 <- read_csv("us-counties-2022.csv")
+
+# Combine the NY Times datasets
+us_counties_combined <- bind_rows(us_counties_2020, us_counties_2021, us_counties_2022)
+
+# Filter the NY Times data for Alaska
+nytimes_alaska <- us_counties_combined %>%
+  filter(state == "Alaska") %>%
+  group_by(date) %>%
+  summarise(
+    total_cases = sum(cases, na.rm = TRUE),
+    total_deaths = sum(deaths, na.rm = TRUE)
+  )
+
+# Join NY Times and CSSE data
+comparison_data <- nytimes_alaska %>%
+  rename(nytimes_total_cases = total_cases, nytimes_total_deaths = total_deaths) %>%
+  left_join(csse_alaska, by = "date") %>%
+  rename(csse_total_cases = total_cases, csse_total_deaths = total_deaths)
+
 
 # Finally, create two visualizations with one plotting the CSSE and NY Times cases and the other plotting the CSEE and NY Times deaths.
+
+# Visualization for cases
+ggplot(comparison_data, aes(x = date)) +
+  geom_line(aes(y = nytimes_total_cases, color = "NY Times")) +
+  geom_line(aes(y = csse_total_cases, color = "CSSE")) +
+  labs(
+    title = "Total COVID-19 Cases Over Time in Alaska",
+    x = "Date",
+    y = "Total Cases",
+    color = "Data Source"
+  ) +
+  theme_minimal()
+
+# Visualization for deaths
+ggplot(comparison_data, aes(x = date)) +
+  geom_line(aes(y = nytimes_total_deaths, color = "NY Times")) +
+  geom_line(aes(y = csse_total_deaths, color = "CSSE")) +
+  labs(
+    title = "Total COVID-19 Deaths Over Time in Alaska",
+    x = "Date",
+    y = "Total Deaths",
+    color = "Data Source"
+  ) +
+  theme_minimal()
+
 
 ```
 
@@ -1021,6 +1087,13 @@ Using the state you selected in Part 2 Question 2 compare the daily number of ca
 
 -- Communicate your methodology, results, and interpretation here -- 
 
+Import and Tidy CSSE Data -> Join CSSE Cases and Deaths -> Tidy NY Times Data ->
+Join NY Times and CSSE Data -> Visualization
+
+The visualizations show the total COVID-19 cases and deaths over time in Alaska, comparing data reported by NY Times and CSSE. By plotting the data from both sources, we can verify their consistency and investigate any discrepancies.
+
+This analysis ensures the reliability of the data sources and helps to understand the impact of COVID-19 in Alaska using multiple data repositories.
+
 ##### Question 2 
 
 Now that you have verified the data reported from the CSSE and NY Times are similar, combine the global and US CSSE data sets and identify the top 10 countries in terms of deaths and cases per 100,000 people between March 15, 2020, and December 31, 2021.
@@ -1028,22 +1101,136 @@ Now that you have verified the data reported from the CSSE and NY Times are simi
 ```{r p3q2-response}
 
 # First, combine and tidy the CSSE death and cases data sets. You may wish to keep the two sets separate.
-# Then, tidy the global population estimates. While tidying your data, remember to include columns that you will be able to use when joining the COVID-19 data. 
+
+# Transform global cases data
+global_cases <- csse_global_cases %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_cases") %>%
+  mutate(date = mdy(date)) %>%
+  select(`Country/Region`, date, total_cases)
+
+# Transform global deaths data
+global_deaths <- csse_global_deaths %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_deaths") %>%
+  mutate(date = mdy(date)) %>%
+  select(`Country/Region`, date, total_deaths)
+
+# Transform US cases data
+us_cases <- csse_us_cases %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_cases") %>%
+  mutate(date = mdy(date)) %>%
+  select(Province_State, `Country_Region` = `Country_Region`, date, total_cases)
+
+# Transform US deaths data
+us_deaths <- csse_us_deaths %>%
+  pivot_longer(cols = starts_with("1"), names_to = "date", values_to = "total_deaths") %>%
+  mutate(date = mdy(date)) %>%
+  select(Province_State, `Country_Region` = `Country_Region`, date, total_deaths)
+
+# Combine global and US cases
+all_cases <- bind_rows(global_cases, us_cases)
+
+# Combine global and US deaths
+all_deaths <- bind_rows(global_deaths, us_deaths)
+
+# Then, tidy the global population estimates. While tidying your data, remember to include columns that you will be able to use when joining the COVID-19 data.
+
+# Tidy the population data
+tidy_population <- global_population_estimates %>%
+  rename(`Country/Region` = `Country Name`, population = `2021 [YR2021]`) %>%
+  select(`Country/Region`, population) %>%
+  mutate(population = as.numeric(population))
+
+
+
+
 # You will notice that the population estimates data does not include every country reported in the CSSE data. When calculating statistics per 100,000 people, you will need to filter the CSSE data to only include countries that you have population estimates for. 
+
+# Summarize cases and deaths by country
+summary_cases <- all_cases %>%
+  filter(date >= "2020-03-15" & date <= "2021-12-31") %>%
+  group_by(`Country/Region`) %>%
+  summarise(total_cases = sum(total_cases, na.rm = TRUE))
+
+summary_deaths <- all_deaths %>%
+  filter(date >= "2020-03-15" & date <= "2021-12-31") %>%
+  group_by(`Country/Region`) %>%
+  summarise(total_deaths = sum(total_deaths, na.rm = TRUE))
+
+# Join with population estimates
+cases_with_population <- summary_cases %>%
+  inner_join(tidy_population, by = "Country/Region") %>%
+  mutate(cases_per_100k = (total_cases / population) * 100000)
+
+deaths_with_population <- summary_deaths %>%
+  inner_join(tidy_population, by = "Country/Region") %>%
+  mutate(deaths_per_100k = (total_deaths / population) * 100000)
+
+# Filter to include only countries with population estimates
+valid_cases <- cases_with_population %>%
+  filter(!is.na(population))
+
+valid_deaths <- deaths_with_population %>%
+  filter(!is.na(population))
+
+# Top 10 countries by cases per 100,000 people
+top_10_cases_per_100k <- valid_cases %>%
+  arrange(desc(cases_per_100k)) %>%
+  slice(1:10)
+
+# Top 10 countries by deaths per 100,000 people
+top_10_deaths_per_100k <- valid_deaths %>%
+  arrange(desc(deaths_per_100k)) %>%
+  slice(1:10)
+
+# Output the results
+print(top_10_cases_per_100k)
+print(top_10_deaths_per_100k)
 
 ```
 
 -- Communicate your methodology, results, and interpretation here -- 
+
+Combine and Tidy Data -> Tidy Population Estimates -> Calculate Statistics ->
+Filter Data -> Identify Top 10 Countries
+
+The results will show the top 10 countries in terms of COVID-19 cases and deaths per 100,000 people between March 15, 2020, and December 31, 2021. This analysis helps to understand which countries were most affected by the pandemic relative to their population size. It provides insights into the global impact of COVID-19 and helps identify regions that may require more attention and resources.
 
 ##### Question 3
 
 Construct a visualization plotting the 10 countries in terms of deaths and cases per 100,000 people between March 15, 2020, and December 31, 2021. In designing your visualization keep the number of data you will be plotting in mind. You may wish to create two separate visualizations, one for deaths and another for cases. 
 
 ```{r p3q3-response}
+# Visualization for cases per 100,000 people
+ggplot(top_10_cases_per_100k, aes(x = reorder(`Country/Region`, cases_per_100k), y = cases_per_100k)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by COVID-19 Cases per 100,000 People",
+    x = "Country",
+    y = "Cases per 100,000 People"
+  ) +
+  theme_minimal()
+
+# Visualization for deaths per 100,000 people
+ggplot(top_10_deaths_per_100k, aes(x = reorder(`Country/Region`, deaths_per_100k), y = deaths_per_100k)) +
+  geom_bar(stat = "identity", fill = "red") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by COVID-19 Deaths per 100,000 People",
+    x = "Country",
+    y = "Deaths per 100,000 People"
+  ) +
+  theme_minimal()
+
+
 
 ```
 
 -- Communicate your methodology, results, and interpretation here -- 
+
+Same as Q2, add in Visualize Data.
+
+The visualizations show the top 10 countries in terms of COVID-19 cases and deaths per 100,000 people between March 15, 2020, and December 31, 2021. These visualizations provide insights into which countries were most affected by the pandemic relative to their population size. This information is useful for understanding the global impact of COVID-19 and identifying regions that may require more attention and resources.
 
 ##### Question 4
 
